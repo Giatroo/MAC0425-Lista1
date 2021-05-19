@@ -6,7 +6,7 @@ import pygame
 
 WIDTH, HEIGHT = 600, 600
 
-TICKS_WIDTH = 10
+TICKS_WIDTH = 150
 
 O_IMG = pygame.transform.scale(
     pygame.image.load(os.path.join("Assets", "o.png")),

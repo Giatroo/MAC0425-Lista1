@@ -33,7 +33,7 @@ def put_piece(piece_type, loc):
         One option between PIECE_EMPTY, PIECE_X or PIECE_O
     loc : tuple
         Must contain two values, the row and the column, which are integers
-        between 1 and 3 inclusive.
+        between 0 and 2 inclusive.
 
     Raises
     ------
@@ -45,8 +45,8 @@ def put_piece(piece_type, loc):
     if type(loc) != tuple:
         raise TypeError(f"loc should be a tuple, but was {loc}.")
 
-    column = loc[0] - 1
-    row = loc[1] - 1
+    column = loc[0]
+    row = loc[1]
     digit_loc = row + column * 3
 
     BOARD += piece_type * 3 ** digit_loc
@@ -60,7 +60,7 @@ def get_piece(loc):
     ----------
     loc : tuple
         Must contain two values, the row and the column, which are integers
-        between 1 and 3 inclusive.
+        between 0 and 2 inclusive.
 
     Raises
     ------
@@ -77,8 +77,8 @@ def get_piece(loc):
 
     if type(loc) != tuple:
         raise f"loc should be a tuple, but was {loc}."
-    column = loc[0] - 1
-    row = loc[1] - 1
+    column = loc[0]
+    row = loc[1]
 
     digit_loc = row + column * 3
     digit = BOARD // (3 ** digit_loc) % 3
@@ -96,9 +96,9 @@ def get_board_matrix():
     """
     board_matrix = []
 
-    for i in range(1, 4):
+    for i in range(3):
         line = []
-        for j in range(1, 4):
+        for j in range(3):
             piece = get_piece((i, j))
             line.append(piece)
         board_matrix.append(line.copy())
@@ -115,32 +115,32 @@ def is_game_over():
     or PIECE_EMPTY it's not game over."""
 
     # row game over
-    for i in range(1, 4):
+    for i in range(3):
         row = []
-        for j in range(1, 4):
+        for j in range(3):
             row.append(get_piece((i, j)))
         if _array_game_over(row):
             return row[0]
 
     # column game over
-    for j in range(1, 4):
+    for j in range(3):
         column = []
-        for i in range(1, 4):
+        for i in range(3):
             column.append(get_piece((i, j)))
         if _array_game_over(column):
             return column[0]
 
     # main diagonal game over
     main_diagonal = []
-    for i in range(1, 4):
+    for i in range(3):
         main_diagonal.append(get_piece((i, i)))
     if _array_game_over(main_diagonal):
         return main_diagonal[0]
 
     # off diagonal game over
     off_diagonal = []
-    for i in range(1, 4):
-        off_diagonal.append(get_piece((i, 4 - i)))
+    for i in range(3):
+        off_diagonal.append(get_piece((i, 3 - i)))
     if _array_game_over(off_diagonal):
         return off_diagonal[0]
 
@@ -150,9 +150,9 @@ def is_game_over():
 def main():
     global BOARD
 
-    put_piece(PIECE_X, (3, 1))
-    put_piece(PIECE_X, (2, 2))
-    put_piece(PIECE_X, (1, 3))
+    put_piece(PIECE_X, (2, 0))
+    put_piece(PIECE_X, (1, 1))
+    put_piece(PIECE_X, (0, 2))
     print(get_board_matrix())
     print(is_game_over())
 
