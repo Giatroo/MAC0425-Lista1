@@ -48,7 +48,7 @@ def draw_pieces():
         for j in range(3):
             piece_type = engine.get_piece((i, j))
             if piece_type != engine.PIECE_EMPTY:
-                draw_piece(piece_type, (i, j))
+               draw_piece(piece_type, (i, j))
 
 
 def draw_game_over(winner_type):
@@ -61,10 +61,9 @@ def draw_game_over(winner_type):
         engine.PIECE_O: colors.RED,
     }
 
-    if winner_type == -1: # draw
+    if winner_type == engine.DRAW_ID:
         color = colors.GREEN
         text = "DRAW"
-
     else:
         winner_player = winner_player_dict[winner_type]
         color = color_dict[winner_type]
@@ -75,8 +74,9 @@ def draw_game_over(winner_type):
     height = gvars.HEIGHT // 2 - text_rend.get_height() // 2
 
     pygame.draw.rect(
-        gvars.WIN, colors.SHADOW, (width, height, text_rend.get_width(),
-                                   text_rend.get_height())
+        gvars.WIN,
+        colors.SHADOW,
+        (width, height, text_rend.get_width(), text_rend.get_height()),
     )
     gvars.WIN.blit(text_rend, (width, height))
 
@@ -85,14 +85,13 @@ def handle_mouse_pressed():
     mouse_pos = pygame.mouse.get_pos()
 
     loc = _coordinates_to_loc(mouse_pos)
-    print(loc)
 
     if engine.get_piece(loc) == engine.PIECE_EMPTY:
         engine.put_piece(engine.get_current_player_type(), loc)
         engine.change_turn()
 
 
-def draw_window():
+def draw_background():
     gvars.WIN.fill(colors.WHITE)
 
     for i in range(1, 3):
@@ -116,32 +115,36 @@ def draw_window():
 
 
 def draw_frame():
-    draw_window()
+    draw_background()
     draw_pieces()
-
-    for event in pygame.event.get():
-        if (
-            event.type == pygame.MOUSEBUTTONDOWN
-            and engine.WINNER_TYPE == engine.PIECE_EMPTY
-        ):
-            handle_mouse_pressed()
-            engine.is_game_over()
-            if engine.MOVEMENTS_LEFT == 0:
-                engine.WINNER_TYPE = -1
-
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_r:
-                engine.init()
 
     if engine.WINNER_TYPE != engine.PIECE_EMPTY:
         draw_game_over(engine.WINNER_TYPE)
-    pygame.display.update()
 
 
 def main():
     pygame.display.set_caption("Jogo da Velha")
     while True:
         draw_frame()
+
+        for event in pygame.event.get():
+            if (
+                event.type == pygame.MOUSEBUTTONDOWN
+                and engine.WINNER_TYPE == engine.PIECE_EMPTY
+            ):
+                handle_mouse_pressed()
+                engine.is_game_over()
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    engine.init()
+
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return
+
+        pygame.display.update()
+
 
 
 if __name__ == "__main__":
