@@ -38,20 +38,37 @@ def _coordinates_to_loc(coordinates):
 
 
 def draw_piece(piece_type, loc):
+    """Draws a piece onto the screen.
+
+    Params
+    ------
+    piece_type : const
+        One option between PIECE_EMPTY, PIECE_X or PIECE_O
+    loc : tuple
+        A location tuple with the square to draw the piece
+    """
     coordinates = _loc_to_coordinates(loc)
     piece_img = _piece_type_to_img(piece_type)
     gvars.WIN.blit(piece_img, coordinates)
 
 
 def draw_pieces():
+    """Draws all the pieces onto the screen."""
     for i in range(3):
         for j in range(3):
             piece_type = engine.get_piece((i, j))
             if piece_type != engine.PIECE_EMPTY:
-               draw_piece(piece_type, (i, j))
+                draw_piece(piece_type, (i, j))
 
 
 def draw_game_over(winner_type):
+    """Draws the game over message onto the screen.
+
+    Params
+    ------
+    winner_type : const
+        One of PIECE_X, PIECE_O or DRAW_ID
+    """
     winner_player_dict = {
         engine.PIECE_X: "X",
         engine.PIECE_O: "O",
@@ -82,6 +99,10 @@ def draw_game_over(winner_type):
 
 
 def handle_mouse_pressed():
+    """Function to handle the mouse pressed event.
+
+    It puts a piece on the location where the mouse is at.
+    """
     mouse_pos = pygame.mouse.get_pos()
 
     loc = _coordinates_to_loc(mouse_pos)
@@ -92,6 +113,7 @@ def handle_mouse_pressed():
 
 
 def draw_background():
+    """Draws the background cross."""
     gvars.WIN.fill(colors.WHITE)
 
     for i in range(1, 3):
@@ -115,6 +137,10 @@ def draw_background():
 
 
 def draw_frame():
+    """Draws a frame of the game.
+
+    Must be called at each iteration of our game loop.
+    """
     draw_background()
     draw_pieces()
 
@@ -123,28 +149,8 @@ def draw_frame():
 
 
 def main():
-    pygame.display.set_caption("Jogo da Velha")
-    while True:
-        draw_frame()
-
-        for event in pygame.event.get():
-            if (
-                event.type == pygame.MOUSEBUTTONDOWN
-                and engine.WINNER_TYPE == engine.PIECE_EMPTY
-            ):
-                handle_mouse_pressed()
-                engine.is_game_over()
-
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_r:
-                    engine.init()
-
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                return
-
-        pygame.display.update()
-
+    """ Tests function """
+    pass
 
 
 if __name__ == "__main__":

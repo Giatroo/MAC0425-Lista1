@@ -84,12 +84,17 @@ def get_piece(loc):
 
 
 def change_turn():
+    """This functions is called when we want to change the turn.
+
+    We change the variables PLAYER_TURN and MOVEMENTS_LEFT
+    """
     global PLAYER_TURN, MOVEMENTS_LEFT
     PLAYER_TURN *= -1
     MOVEMENTS_LEFT -= 1
 
 
 def get_current_player_type():
+    """Returns the next player to move."""
     global PLAYER_TURN
     return PIECE_X if PLAYER_TURN == 1 else PIECE_O
 
@@ -101,8 +106,16 @@ def _array_game_over(array):
 
 
 def is_game_over():
-    """This functions returns the winning piece constant if it was a game over
-    or PIECE_EMPTY it's not game over."""
+    """This function checks if the game is over or not, modifing the global
+    variable WINNER_TYPE if any player won or if it's a draw.
+
+    Returns
+    -------
+    - PIECE_X if X won;
+    - PIECE_O if O won;
+    - DRAW_ID if it's a draw;
+    - PIECE_EMPTY if the game isn't over.
+    """
     global WINNER_TYPE
 
     # row game over
@@ -135,11 +148,13 @@ def is_game_over():
 
     if MOVEMENTS_LEFT == 0:
         WINNER_TYPE = DRAW_ID
+        return DRAW_ID
 
     return PIECE_EMPTY
 
 
 def init():
+    """This function is called whenever we need to start another game."""
     global BOARD, MOVEMENTS_LEFT, WINNER_TYPE, PLAYER_TURN
     BOARD = np.zeros((3, 3), dtype=int)
     MOVEMENTS_LEFT = 9
@@ -148,6 +163,7 @@ def init():
 
 
 def main():
+    """Test function."""
     global BOARD
 
     put_piece(PIECE_X, (2, 0))
