@@ -23,6 +23,9 @@ PLAYER_TURN = 1
 MOVEMENTS_LEFT = 9
 """ The number of empty squares on the board """
 
+WINNER_TYPE = PIECE_EMPTY
+""" If the game is over, WINNER_TYPE will be PIECE_X or PIECE_O """
+
 
 def put_piece(piece_type, loc):
     """Modify BOARD to put the piece_type in the position loc.
@@ -106,6 +109,17 @@ def get_board_matrix():
     return board_matrix
 
 
+def change_turn():
+    global PLAYER_TURN, MOVEMENTS_LEFT
+    PLAYER_TURN *= -1
+    MOVEMENTS_LEFT -= 1
+
+
+def get_current_player_type():
+    global PLAYER_TURN
+    return PIECE_X if PLAYER_TURN == 1 else PIECE_O
+
+
 def _array_game_over(array):
     return array[0] == array[1] == array[2]
 
@@ -113,6 +127,7 @@ def _array_game_over(array):
 def is_game_over():
     """This functions returns the winning piece constant if it was a game over
     or PIECE_EMPTY it's not game over."""
+    global WINNER_TYPE
 
     # row game over
     for i in range(3):
@@ -120,6 +135,7 @@ def is_game_over():
         for j in range(3):
             row.append(get_piece((i, j)))
         if _array_game_over(row):
+            WINNER_TYPE = row[0]
             return row[0]
 
     # column game over
@@ -128,6 +144,7 @@ def is_game_over():
         for i in range(3):
             column.append(get_piece((i, j)))
         if _array_game_over(column):
+            WINNER_TYPE = column[0]
             return column[0]
 
     # main diagonal game over
@@ -135,6 +152,7 @@ def is_game_over():
     for i in range(3):
         main_diagonal.append(get_piece((i, i)))
     if _array_game_over(main_diagonal):
+        WINNER_TYPE = main_diagonal[0]
         return main_diagonal[0]
 
     # off diagonal game over
@@ -142,9 +160,17 @@ def is_game_over():
     for i in range(3):
         off_diagonal.append(get_piece((i, 3 - i)))
     if _array_game_over(off_diagonal):
+        WINNER_TYPE = off_diagonal[0]
         return off_diagonal[0]
 
     return PIECE_EMPTY
+
+def init():
+    global BOARD, MOVEMENTS_LEFT, WINNER_TYPE, PLAYER_TURN
+    BOARD = 0
+    MOVEMENTS_LEFT = 9
+    WINNER_TYPE = PIECE_EMPTY
+    PLAYER_TURN = 1
 
 
 def main():

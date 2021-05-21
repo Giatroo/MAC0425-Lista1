@@ -3,6 +3,8 @@ SHADOW = (192, 192, 192)
 
 WHITE = (255, 255, 255)
 
+BLACK = (0, 0, 0)
+
 LIGHTGREEN = (0, 255, 0)
 
 GREEN = (0, 200, 0)
