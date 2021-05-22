@@ -23,6 +23,11 @@ def main():
                 if event.key == pygame.K_r:
                     engine.init()
 
+                if event.key == pygame.K_q:
+                    pygame.quit()
+                    return
+
+
             if event.type == pygame.QUIT:
                 pygame.quit()
                 return
