@@ -6,16 +6,16 @@ etc.
 
 import numpy as np
 
-BOARD = np.zeros((3, 3), dtype=int)
-""" BOARD is a 3x3 matrix where each position must be one of PIECE_EMPTY,
-PIECE_X or PIECE_O """
-
 PIECE_EMPTY = 0
 """ Constant for an empty spot on the board """
 PIECE_X = 1
 """ Constant for an X on the board """
 PIECE_O = 2
 """ Constant for an O on the board """
+
+BOARD = np.full((3, 3), PIECE_EMPTY, dtype=int)
+""" BOARD is a 3x3 matrix where each position must be one of PIECE_EMPTY,
+PIECE_X or PIECE_O """
 
 PLAYER_TURN = 1
 """ If 1, its X's turn, if -1, its O's turn """

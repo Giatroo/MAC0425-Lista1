@@ -5,6 +5,7 @@ import pygame
 import colors
 import game_engine as engine
 import global_vars as gvars
+import minimax as ai
 
 
 def _piece_type_to_img(piece_type):
@@ -12,11 +13,28 @@ def _piece_type_to_img(piece_type):
     return piece_type_to_img_dict[piece_type]
 
 
+def _piece_type_to_txt(piece_type):
+    piece_type_to_txt_dict = {
+        engine.PIECE_X: "X",
+        engine.PIECE_O: "O",
+        engine.PIECE_EMPTY: " ",
+    }
+    return piece_type_to_txt_dict[piece_type]
+
+
+def _piece_type_to_color(piece_type):
+    piece_type_to_color_dict = {
+        engine.PIECE_X: colors.BLUE,
+        engine.PIECE_O: colors.RED,
+    }
+    return piece_type_to_color_dict[piece_type]
+
+
 def _loc_to_coordinates(loc):
     column = (
         loc[0] * gvars.WIDTH // 3 - gvars.TICKS_WIDTH // 2 + 2 * gvars.TICKS_PADDING
     )
-    row = loc[1] * gvars.HEIGHT // 3 - gvars.TICKS_WIDTH // 2 + 2 * gvars.TICKS_PADDING
+    row = loc[1] * gvars.HEIGHT // 3 - gvars.TICKS_WIDTH // 2 + 3 * gvars.TICKS_PADDING
 
     return (row, column)
 
@@ -47,9 +65,12 @@ def draw_piece(piece_type, loc):
     loc : tuple
         A location tuple with the square to draw the piece
     """
+
     coordinates = _loc_to_coordinates(loc)
-    piece_img = _piece_type_to_img(piece_type)
-    gvars.WIN.blit(piece_img, coordinates)
+    piece_txt = gvars.PIECES_FONT.render(
+        _piece_type_to_txt(piece_type), False, _piece_type_to_color(piece_type)
+    )
+    gvars.WIN.blit(piece_txt, coordinates)
 
 
 def draw_pieces():
@@ -111,6 +132,10 @@ def handle_mouse_pressed():
         engine.put_piece(engine.get_current_player_type(), loc)
         engine.change_turn()
 
+        if engine.is_game_over() == engine.PIECE_EMPTY:
+            # Then, the AI must play
+            ai.move(engine.BOARD, True)
+
 
 def draw_background():
     """Draws the background cross."""
@@ -149,7 +174,7 @@ def draw_frame():
 
 
 def main():
-    """ Tests function """
+    """Tests function."""
     pass
 
 

@@ -4,10 +4,12 @@ import pygame
 
 import drawing_engine as drawing
 import game_engine as engine
+import minimax as ai
 
 
 def main():
     pygame.display.set_caption("Jogo da Velha")
+    ai.init(engine.BOARD, ai_first=True, verbose=True)
     while True:
         drawing.draw_frame()
 
@@ -22,6 +24,7 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
                     engine.init()
+                    ai.init(engine.BOARD, ai_first=True, verbose=True)
 
                 if event.key == pygame.K_q:
                     pygame.quit()

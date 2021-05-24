@@ -24,4 +24,5 @@ BACKGROUND_IMG = pygame.transform.scale(
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 
 pygame.font.init()
+PIECES_FONT = pygame.font.SysFont("Comic Sans MS", WIDTH // 2)
 END_FONT = pygame.font.SysFont("Comic Sans MS", 120)
