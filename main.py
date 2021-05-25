@@ -17,17 +17,21 @@ def init_ai():
     ai_first = int(input("Do you want to be the first or second to play? (1/2) "))
     ai_first = ai_first == 2
 
+    toss_turn = input("Do you want to flip a coin in each turn? (y/n) ")
+    toss_turn = toss_turn == "y"
+
     verbose = input("Do you want the AI to print its thoughts? (y/n) ")
     verbose = verbose == "y"
 
-    ai.init(engine.BOARD, ai_first=ai_first, verbose=verbose)
+    ai.init(engine.BOARD, ai_first=ai_first, toss_turn=toss_turn, verbose=verbose)
+    return ai_first, toss_turn, verbose
 
 
 def main():
     pygame.display.set_caption("Jogo da Velha")
 
     welcome()
-    init_ai()
+    ai_first, toss_turn, verbose = init_ai()
 
     while True:
         drawing.draw_frame()
@@ -46,13 +50,22 @@ def main():
                     print()
                     init_ai()
 
+                if event.key == pygame.K_e:
+                    engine.init()
+                    ai.init(
+                        engine.BOARD,
+                        ai_first=ai_first,
+                        toss_turn=toss_turn,
+                        verbose=verbose,
+                    )
+
                 if event.key == pygame.K_q:
-                    print('\nThanks for playing =)')
+                    print("\nThanks for playing =)")
                     pygame.quit()
                     return
 
             if event.type == pygame.QUIT:
-                print('\nThanks for playing =)')
+                print("\nThanks for playing =)")
                 pygame.quit()
                 return
 

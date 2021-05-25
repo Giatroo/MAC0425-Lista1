@@ -4,6 +4,8 @@ Here we keep the board, the functions for deciding if the game is over,
 etc.
 """
 
+import random
+
 import numpy as np
 
 PIECE_EMPTY = 0
@@ -29,6 +31,8 @@ DRAW_ID = -1
 WINNER_TYPE = PIECE_EMPTY
 """ If the game is over, WINNER_TYPE will be PIECE_X, PIECE_O or DRAW_ID """
 
+FLIPPING_COIN = False
+""" If the turns will be based on a coin toss """
 
 def put_piece(piece_type, loc):
     """Modify BOARD to put the piece_type in the position loc.
@@ -83,14 +87,37 @@ def get_piece(loc):
     return BOARD[loc[0], loc[1]]
 
 
-def change_turn():
+def change_turn(random_turn=False):
     """This functions is called when we want to change the turn.
 
-    We change the variables PLAYER_TURN and MOVEMENTS_LEFT
+    We change the variables `PLAYER_TURN` and `MOVEMENTS_LEFT`.
+
+    If `random_turn` is True, than there's the change of the turn keeping in the
+    same player.
+
+    Returns
+    -------
+    turn_changed : bool
+        Whether or not the turn was changed.
     """
     global PLAYER_TURN, MOVEMENTS_LEFT
+
+    if random_turn:
+        coin = random.randint(0, 1)
+        coin_to_str = {0 : 'heads', 1 : 'tails'}
+
+        print('\nFliping a coin...', end='')
+        print(f'   coin has {coin_to_str[coin]}.')
+
+        flip_turn = bool(coin)
+
+        if not flip_turn:
+            MOVEMENTS_LEFT -= 1
+            return False
+
     PLAYER_TURN *= -1
     MOVEMENTS_LEFT -= 1
+    return True
 
 
 def get_current_player_type():

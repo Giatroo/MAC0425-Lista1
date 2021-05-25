@@ -129,11 +129,11 @@ def handle_mouse_pressed():
 
     if engine.get_piece(loc) == engine.PIECE_EMPTY:
         engine.put_piece(engine.get_current_player_type(), loc)
-        engine.change_turn()
+        changed = engine.change_turn(engine.FLIPPING_COIN)
 
-        if engine.is_game_over() == engine.PIECE_EMPTY:
+        if changed and engine.is_game_over() == engine.PIECE_EMPTY:
             # Then, the AI must play
-            ai.move(engine.BOARD, ai.AI_VERBOSE)
+            ai.move(engine.BOARD, engine.FLIPPING_COIN, ai.AI_VERBOSE)
 
 
 def draw_background():

@@ -19,7 +19,7 @@ NULL_MOVE = (-1, -1)
 """ A constant for a null movement """
 
 
-def init(board, ai_first=False, verbose=False):
+def init(board, ai_first=False, toss_turn=False, verbose=False):
     """Initializes the AI choosing if the AI is going to play first or second.
 
     If the AI will play first, it makes the first move.
@@ -30,17 +30,20 @@ def init(board, ai_first=False, verbose=False):
         A 3x3 representation of the board (it will probably be empty)
     ai_first : bool, default=False
         If the AI is going to play first or second (be X or O).
+    toss_turn : bool, default=False
+        If the turns will be based on a coin toss.
     verbose : bool, default=True
         If the AI will print the evaluation of the board or not.
     """
     global AI_PIECE, PLAYER_PIECE, AI_VERBOSE
 
     AI_VERBOSE = verbose
+    engine.FLIPPING_COIN = toss_turn
 
     if ai_first:
         AI_PIECE = engine.PIECE_X
         PLAYER_PIECE = engine.PIECE_O
-        move(board, AI_VERBOSE)
+        move(board, toss_turn=toss_turn, verbose=verbose)
     else:
         AI_PIECE = engine.PIECE_O
         PLAYER_PIECE = engine.PIECE_X
@@ -185,7 +188,7 @@ def minimax(board, maxi=True, alpha=-INF, beta=INF):
         return mini_value, best_move
 
 
-def move(board, verbose=False):
+def move(board, toss_turn=False, verbose=False):
     """Function called when we want the AI to play. It puts a piece on the
     board and change the turn.
 
@@ -193,6 +196,8 @@ def move(board, verbose=False):
     ----------
     board : numpy ndarray
         The current board.
+    toss_turn : bool, default=False
+        If the turns will be based on a coin toss or not.
     verbose : bool, default=False
         If we want or not the AI to tell us its evaluation of the position.
     """
@@ -203,7 +208,10 @@ def move(board, verbose=False):
         print(f'[AI]: {value_to_str[value]}')
 
     engine.put_piece(AI_PIECE, movement)
-    engine.change_turn()
+    changed = engine.change_turn(toss_turn)
+
+    if not changed and engine.is_game_over() == engine.PIECE_EMPTY:
+        move(engine.BOARD, toss_turn, verbose)
 
 
 def main():
