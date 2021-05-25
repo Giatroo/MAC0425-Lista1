@@ -9,6 +9,9 @@ AI_PIECE = engine.PIECE_X
 PLAYER_PIECE = engine.PIECE_O
 """ The type of the piece of the player """
 
+AI_VERBOSE = True
+""" Defines if the AI will print it's thoughts about the game """
+
 INF = 2
 """ A constant for a infinity amount """
 
@@ -30,12 +33,14 @@ def init(board, ai_first=False, verbose=False):
     verbose : bool, default=True
         If the AI will print the evaluation of the board or not.
     """
-    global AI_PIECE, PLAYER_PIECE
+    global AI_PIECE, PLAYER_PIECE, AI_VERBOSE
+
+    AI_VERBOSE = verbose
 
     if ai_first:
         AI_PIECE = engine.PIECE_X
         PLAYER_PIECE = engine.PIECE_O
-        move(board, verbose)
+        move(board, AI_VERBOSE)
     else:
         AI_PIECE = engine.PIECE_O
         PLAYER_PIECE = engine.PIECE_X
@@ -194,8 +199,8 @@ def move(board, verbose=False):
     value, movement = minimax(board)
 
     if verbose:
-        value_to_str = {-1: "losing game", 0: "game tied", 1: "winning game"}
-        print(value_to_str[value])
+        value_to_str = {-1: "Losing game", 0: "Game tied", 1: "Winning game"}
+        print(f'[AI]: {value_to_str[value]}')
 
     engine.put_piece(AI_PIECE, movement)
     engine.change_turn()

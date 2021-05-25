@@ -7,7 +7,6 @@ import game_engine as engine
 import global_vars as gvars
 import minimax as ai
 
-
 def _piece_type_to_img(piece_type):
     piece_type_to_img_dict = {engine.PIECE_X: gvars.X_IMG, engine.PIECE_O: gvars.O_IMG}
     return piece_type_to_img_dict[piece_type]
@@ -134,7 +133,7 @@ def handle_mouse_pressed():
 
         if engine.is_game_over() == engine.PIECE_EMPTY:
             # Then, the AI must play
-            ai.move(engine.BOARD, True)
+            ai.move(engine.BOARD, ai.AI_VERBOSE)
 
 
 def draw_background():

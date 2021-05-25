@@ -7,9 +7,28 @@ import game_engine as engine
 import minimax as ai
 
 
+def welcome():
+    print("Welcome to my tic-tac-toe game.\n")
+    print("Use R to restart the game.")
+    print("Use Q to quit the game.\n")
+
+
+def init_ai():
+    ai_first = int(input("Do you want to be the first or second to play? (1/2) "))
+    ai_first = ai_first == 2
+
+    verbose = input("Do you want the AI to print its thoughts? (y/n) ")
+    verbose = verbose == "y"
+
+    ai.init(engine.BOARD, ai_first=ai_first, verbose=verbose)
+
+
 def main():
     pygame.display.set_caption("Jogo da Velha")
-    ai.init(engine.BOARD, ai_first=True, verbose=True)
+
+    welcome()
+    init_ai()
+
     while True:
         drawing.draw_frame()
 
@@ -24,14 +43,16 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
                     engine.init()
-                    ai.init(engine.BOARD, ai_first=True, verbose=True)
+                    print()
+                    init_ai()
 
                 if event.key == pygame.K_q:
+                    print('\nThanks for playing =)')
                     pygame.quit()
                     return
 
-
             if event.type == pygame.QUIT:
+                print('\nThanks for playing =)')
                 pygame.quit()
                 return
 
