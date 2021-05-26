@@ -1,4 +1,4 @@
-## Project name
+## IA para Jogo da Velha
 
 ![Visits Badge](https://badges.pufler.dev/visits/Giatroo/MAC0425-Lista1)
 ![Last update](https://img.shields.io/github/last-commit/Giatroo/MAC0425-Lista1)
