@@ -8,12 +8,14 @@ import minimax as ai
 
 
 def welcome():
+    """The function with the welcome message."""
     print("Welcome to my tic-tac-toe game.\n")
     print("Use R to restart the game.")
     print("Use Q to quit the game.\n")
 
 
 def init_ai():
+    """The function to initiate the AI module."""
     ai_first = int(input("Do you want to be the first or second to play? (1/2) "))
     ai_first = ai_first == 2
 
@@ -28,9 +30,14 @@ def init_ai():
 
 
 def main():
+    """The main function of the game.
+
+    The game should start by this function
+    """
     pygame.display.set_caption("Jogo da Velha")
 
     welcome()
+    engine.init()
     ai_first, toss_turn, verbose = init_ai()
 
     while True:
@@ -48,7 +55,7 @@ def main():
                 if event.key == pygame.K_r:
                     engine.init()
                     print()
-                    init_ai()
+                    ai_first, toss_turn, verbose = init_ai()
 
                 if event.key == pygame.K_e:
                     engine.init()

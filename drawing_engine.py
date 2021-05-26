@@ -7,11 +7,6 @@ import game_engine as engine
 import global_vars as gvars
 import minimax as ai
 
-def _piece_type_to_img(piece_type):
-    piece_type_to_img_dict = {engine.PIECE_X: gvars.X_IMG, engine.PIECE_O: gvars.O_IMG}
-    return piece_type_to_img_dict[piece_type]
-
-
 def _piece_type_to_txt(piece_type):
     piece_type_to_txt_dict = {
         engine.PIECE_X: "X",

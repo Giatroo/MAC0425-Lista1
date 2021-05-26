@@ -34,6 +34,47 @@ WINNER_TYPE = PIECE_EMPTY
 FLIPPING_COIN = False
 """ If the turns will be based on a coin toss """
 
+
+def init():
+    """This function is called whenever we need to start another game."""
+    global BOARD, MOVEMENTS_LEFT, WINNER_TYPE, PLAYER_TURN
+    BOARD = np.zeros((3, 3), dtype=int)
+    MOVEMENTS_LEFT = 9
+    WINNER_TYPE = PIECE_EMPTY
+    PLAYER_TURN = 1
+
+
+def hash_board(board):
+    """This function gets a board represented as a matrix and returns a hash
+    value of the board.
+
+    Parameters
+    ----------
+    board : numpy ndarray
+        The 3x3 matrix of the board.
+
+    Returns
+    -------
+    hash_number : int
+        The hash value of the board.
+    """
+    piece_to_num = {
+        PIECE_EMPTY: 0,
+        PIECE_X: 1,
+        PIECE_O: 2,
+    }
+
+    hash_num = 0
+    exp = 0
+
+    for i in range(3):
+        for j in range(3):
+            hash_num += board[i][j] * 3 ** exp
+            exp += 1
+
+    return hash_num
+
+
 def put_piece(piece_type, loc):
     """Modify BOARD to put the piece_type in the position loc.
 
@@ -104,10 +145,10 @@ def change_turn(random_turn=False):
 
     if random_turn:
         coin = random.randint(0, 1)
-        coin_to_str = {0 : 'heads', 1 : 'tails'}
+        coin_to_str = {0: "heads", 1: "tails"}
 
-        print('\nFliping a coin...', end='')
-        print(f'   coin has {coin_to_str[coin]}.')
+        print("\nFliping a coin...", end="")
+        print(f"   coin has {coin_to_str[coin]}.")
 
         flip_turn = bool(coin)
 
@@ -178,15 +219,6 @@ def is_game_over():
         return DRAW_ID
 
     return PIECE_EMPTY
-
-
-def init():
-    """This function is called whenever we need to start another game."""
-    global BOARD, MOVEMENTS_LEFT, WINNER_TYPE, PLAYER_TURN
-    BOARD = np.zeros((3, 3), dtype=int)
-    MOVEMENTS_LEFT = 9
-    WINNER_TYPE = PIECE_EMPTY
-    PLAYER_TURN = 1
 
 
 def main():

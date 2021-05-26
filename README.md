@@ -17,3 +17,6 @@ pelo professor.
 
 Esse projeto utiliza `pygame` para visualizar o jogo, portanto é preciso
 intala-lo.
+
+Para iniciar o jogo, basta usar o comando:
+`$ python main.py`

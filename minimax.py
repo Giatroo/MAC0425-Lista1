@@ -18,6 +18,12 @@ INF = 2
 NULL_MOVE = (-1, -1)
 """ A constant for a null movement """
 
+MEMO_BOARD = dict()
+""" Memoization hashtable for the `expected_minimax` function, it's keys are a
+tuple `(maxi, board)`. Where `maxi` is True or False (if we're evaluating the
+maximizing player or not) and `board` is the hashed value of a board using the
+`engine.hash_board` function. """
+
 
 def init(board, ai_first=False, toss_turn=False, verbose=False):
     """Initializes the AI choosing if the AI is going to play first or second.
@@ -35,7 +41,7 @@ def init(board, ai_first=False, toss_turn=False, verbose=False):
     verbose : bool, default=True
         If the AI will print the evaluation of the board or not.
     """
-    global AI_PIECE, PLAYER_PIECE, AI_VERBOSE
+    global AI_PIECE, PLAYER_PIECE, AI_VERBOSE, MEMO_BOARD
 
     AI_VERBOSE = verbose
     engine.FLIPPING_COIN = toss_turn
@@ -138,12 +144,11 @@ def minimax(board, maxi=True, alpha=-INF, beta=INF):
         If the AI is maximazim its gains or minimizing its loses.
     alpha : int, default=-INF
         The alpha value (referent to the alpha-beta pruning technic)
-    beta :
+    beta : int, default=INF
         The beta value (referent to the alpha-beta pruning technic)
 
     Returns
     -------
-
     board_value : int
         If the AI thinks the position is a draw, than it returns 0. If it thinks
         it's a winning position, then it returns 1. If it thinks it's a losing
@@ -188,6 +193,91 @@ def minimax(board, maxi=True, alpha=-INF, beta=INF):
         return mini_value, best_move
 
 
+def expected_minimax(board, maxi=True, alpha=-INF, beta=INF):
+    """The expected minimax algorithm. It receives a board and player to
+    evaluate and will consider that the game has a 1/2 probability of each
+    player playing the next turn.
+
+    This function uses a memoization technic to make the computations faster. It
+    uses the `MEMO_BOARD` hashtable.
+
+    Parameters
+    ----------
+    board : numpy ndarray
+        The current board
+    maxi : bool, default=True
+        If the AI is maximazim its gains or minimizing its loses.
+    alpha : int, default=-INF
+        The alpha value (referent to the alpha-beta pruning technic)
+    beta : int, default=INF
+        The beta value (referent to the alpha-beta pruning technic)
+
+    Returns
+    -------
+    board_value : int
+        If the AI thinks the position is a draw, than it returns 0. If it thinks
+        it's a winning position, then it returns 1. If it thinks it's a losing
+        game, then it returns -1.
+    loc : tuple
+        The best possible movement in the position.
+    """
+    # If we've already computed this board for this player, than return the
+    # calculated value and movement.
+    if (maxi, engine.hash_board(board)) in MEMO_BOARD:
+        return MEMO_BOARD[maxi, engine.hash_board(board)]
+
+    game_over = is_game_over(board)
+    # game over cases:
+    if game_over == engine.DRAW_ID:  # draw
+        MEMO_BOARD[maxi, engine.hash_board(board)] = (0, NULL_MOVE)
+        return 0, NULL_MOVE
+    if game_over == AI_PIECE:  # ai wins
+        MEMO_BOARD[maxi, engine.hash_board(board)] = (1, NULL_MOVE)
+        return 1, NULL_MOVE
+    if game_over == PLAYER_PIECE:  # player wins
+        MEMO_BOARD[maxi, engine.hash_board(board)] = (-1, NULL_MOVE)
+        return -1, NULL_MOVE
+
+    if maxi:
+        maxi_value = -INF
+        best_move = NULL_MOVE
+        for new_board, move in get_moves(board, AI_PIECE):
+            ai_next_ret = expected_minimax(new_board, maxi)
+            human_next_ret = expected_minimax(new_board, not maxi)
+
+            minimax_value = (ai_next_ret[0] + human_next_ret[0]) / 2
+
+            if minimax_value > maxi_value:
+                maxi_value = minimax_value
+                best_move = move
+
+            alpha = max(alpha, maxi_value)
+            if alpha >= beta:
+                break
+
+        MEMO_BOARD[maxi, engine.hash_board(board)] = (maxi_value, best_move)
+        return maxi_value, best_move
+    else:
+        mini_value = INF
+        best_move = NULL_MOVE
+        for new_board, move in get_moves(board, PLAYER_PIECE):
+            human_next_ret = expected_minimax(new_board, maxi)
+            ai_next_ret = expected_minimax(new_board, not maxi)
+
+            minimax_value = (ai_next_ret[0] + human_next_ret[0]) / 2
+
+            if minimax_value < mini_value:
+                mini_value = minimax_value
+                best_move = move
+
+            beta = min(beta, mini_value)
+            if alpha >= beta:
+                break
+
+        MEMO_BOARD[maxi, engine.hash_board(board)] = (mini_value, best_move)
+        return mini_value, best_move
+
+
 def move(board, toss_turn=False, verbose=False):
     """Function called when we want the AI to play. It puts a piece on the
     board and change the turn.
@@ -201,11 +291,18 @@ def move(board, toss_turn=False, verbose=False):
     verbose : bool, default=False
         If we want or not the AI to tell us its evaluation of the position.
     """
-    value, movement = minimax(board)
+    if toss_turn:
+        value, movement = expected_minimax(board)
 
-    if verbose:
-        value_to_str = {-1: "Losing game", 0: "Game tied", 1: "Winning game"}
-        print(f'[AI]: {value_to_str[value]}')
+        if verbose:
+            print(f"[AI]: Moving {movement}.")
+            print(f"[AI]: My chances of winning are {value}.")
+    else:
+        value, movement = minimax(board)
+
+        if verbose:
+            value_to_str = {-1: "Losing game", 0: "Game tied", 1: "Winning game"}
+            print(f"[AI]: {value_to_str[value]}")
 
     engine.put_piece(AI_PIECE, movement)
     changed = engine.change_turn(toss_turn)
@@ -217,12 +314,17 @@ def move(board, toss_turn=False, verbose=False):
 def main():
     """The test function."""
     board = np.full((3, 3), engine.PIECE_EMPTY, dtype=int)
-    board[0][1] = engine.PIECE_X
-    board[0][0] = engine.PIECE_O
-    board[2][2] = engine.PIECE_X
-    board[1][1] = engine.PIECE_O
+    board[0][0] = engine.PIECE_X
+    board[0][1] = engine.PIECE_O
+    board[0][2] = engine.PIECE_X
+    board[1][1] = engine.PIECE_X
+    board[1][2] = engine.PIECE_O
+    board[2][2] = engine.PIECE_O
     print(board)
-    print(minimax(board, maxi=True))
+    global AI_PIECE, PLAYER_PIECE
+    AI_PIECE = engine.PIECE_O
+    PLAYER_PIECE = engine.PIECE_X
+    print(expected_minimax(board, maxi=True))
 
 
 if __name__ == "__main__":
